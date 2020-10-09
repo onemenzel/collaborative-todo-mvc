@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "ESNext",
     "module": "esnext",
     "strict": true,
     "jsx": "preserve",
@@ -10,6 +10,7 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
+    "downlevelIteration": true,
     "baseUrl": ".",
     "types": [
       "webpack-env"
