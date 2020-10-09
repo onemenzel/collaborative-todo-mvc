@@ -16,16 +16,15 @@ export function execAll(...fns: Array<() => any>) {
   return () => fns.forEach(fn => fn());
 }
 
-type YjsType<T = any> = Y.Map<T> | Y.Array<T> | Y.Text | Y.XmlElement | Y.XmlFragment;
+// type YjsType<T = any> = Y.Map<T> | Y.Array<T> | Y.Text | Y.XmlElement | Y.XmlFragment;
+type YjsType<T = any> = Y.AbstractType<any>;
 
 /**
  * Turns a Yjs CRDT into a reactive Vue property.
  * Reactivity is only triggered on shallow change.
  *
  * @param crdt the crdt to turn reactive
- * @returns a tuple of the computed reference for usage in
- *    Vue and a function to disable the reactivity. Only use the latter if you don't need
- *    the reference anymore.
+ * @returns a reference for usage in Vue.
  */
 export function yReactive<T extends YjsType>(crdt: T): Ref<T> {
   const reference = shallowRef(crdt);
@@ -41,9 +40,7 @@ export function yReactive<T extends YjsType>(crdt: T): Ref<T> {
  * Reactivity is triggered for every sub element changing.
  *
  * @param crdt the crdt to turn reactive
- * @returns a tuple of the computed reference for usage in
- *    Vue and a function to disable the reactivity. Only use the latter if you don't need
- *    the reference anymore.
+ * @returns a reference for usage in Vue.
  */
 export function yReactiveDeep<T extends YjsType>(crdt: T): Ref<T> {
   const reference = shallowRef(crdt);
