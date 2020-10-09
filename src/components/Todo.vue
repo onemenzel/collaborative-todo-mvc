@@ -7,29 +7,41 @@
       :checked="todoRef.get('done')"
       @change="setDone($event, index)"
     />
-    <span>{{ todoRef.get("text") }}</span>
-    <button class="delete-button" @click="deleteTodo(index)">Löschen</button>
+    <input v-if="editing" type="text" v-model="todoTxt" @keyup.enter="toggleEdit" />
+    <span v-else>{{ todoRef.get("text") }}</span>
+    <div class="button-group">
+      <button class="button" @click="toggleEdit">🖋</button>
+      <button class="button" @click="deleteTodo(index)">🗑</button>
+    </div>
   </li>
 </template>
 
 <script lang="ts" setup="props">
 export { deleteTodo } from "@/store/todo";
-import { setDone as _setDone, TodoMap } from "@/store/todo";
+import { changeTodoText, setDone as _setDone, TodoMap } from "@/store/todo";
 import { yReactive } from "@/util";
-import { onBeforeUnmount } from "vue";
+import { ref } from "vue";
 
 declare const props: {
   todo: TodoMap;
   index: number;
 };
 
-const [todoRef, unmountTodo] = yReactive(props.todo);
-onBeforeUnmount(unmountTodo);
-export { todoRef };
+export const todoRef = yReactive(props.todo);
+
+export const editing = ref(false);
+export const todoTxt = ref(props.todo.get("text") as string);
 
 export function setDone(e: Event, index: number) {
   const target = e.target as HTMLInputElement;
   _setDone(index, target.checked);
+}
+
+export function toggleEdit() {
+  if (editing.value === true && props.todo.get("text") !== todoTxt.value) {
+    changeTodoText(props.index, todoTxt.value);
+  }
+  editing.value = !editing.value;
 }
 </script>
 
@@ -41,12 +53,5 @@ li {
 input[type="checkbox"] {
   display: inline-block;
   margin-right: 1rem;
-}
-.delete-button {
-  margin-left: 1rem;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.125rem;
-  border: 1px solid black;
-  background: transparent;
 }
 </style>

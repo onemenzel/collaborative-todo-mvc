@@ -1,7 +1,8 @@
-import * as Y from "yjs";
-import { ObjectConstructor } from "@/types";
-import { triggerRef, computed, ComputedRef } from "vue";
 import { ValueOf } from "ts-essentials";
+import { triggerRef, shallowRef, Ref, onBeforeUnmount } from "vue";
+import * as Y from "yjs";
+
+import { ObjectConstructor } from "@/types";
 
 export function entries<T extends {}>(obj: T): Array<[string, any]> {
   return (Object as ObjectConstructor).keys(obj).map(key => [key, obj[key]]);
@@ -9,6 +10,10 @@ export function entries<T extends {}>(obj: T): Array<[string, any]> {
 
 export function objToMap<T extends {}>(obj: T) {
   return new Y.Map<ValueOf<T>>(entries(obj));
+}
+
+export function execAll(...fns: Array<() => any>) {
+  return () => fns.forEach(fn => fn());
 }
 
 type YjsType<T = any> = Y.Map<T> | Y.Array<T> | Y.Text | Y.XmlElement | Y.XmlFragment;
@@ -22,12 +27,13 @@ type YjsType<T = any> = Y.Map<T> | Y.Array<T> | Y.Text | Y.XmlElement | Y.XmlFra
  *    Vue and a function to disable the reactivity. Only use the latter if you don't need
  *    the reference anymore.
  */
-export function yReactive<T extends YjsType>(crdt: T): [ComputedRef<T>, () => void] {
-  const reference = computed(() => crdt);
+export function yReactive<T extends YjsType>(crdt: T): Ref<T> {
+  const reference = shallowRef(crdt);
   const trigger = () => triggerRef(reference);
   crdt.observe(trigger);
   const unobserve = () => crdt.unobserve(trigger);
-  return [reference, unobserve];
+  onBeforeUnmount(unobserve);
+  return reference;
 }
 
 /**
@@ -39,10 +45,11 @@ export function yReactive<T extends YjsType>(crdt: T): [ComputedRef<T>, () => vo
  *    Vue and a function to disable the reactivity. Only use the latter if you don't need
  *    the reference anymore.
  */
-export function yReactiveDeep<T extends YjsType>(crdt: T): [ComputedRef<T>, () => void] {
-  const reference = computed(() => crdt);
+export function yReactiveDeep<T extends YjsType>(crdt: T): Ref<T> {
+  const reference = shallowRef(crdt);
   const trigger = () => triggerRef(reference);
   crdt.observeDeep(trigger);
   const unobserve = () => crdt.unobserveDeep(trigger);
-  return [reference, unobserve];
+  onBeforeUnmount(unobserve);
+  return reference;
 }
