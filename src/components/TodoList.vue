@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="todos">
     <p>
       <label for="add-todo">Add To do</label><br />
       <input name="add-todo" id="add-todo" type="text" @keyup.enter="makeTodo" />
@@ -30,5 +30,9 @@ export default {};
 <style scoped lang="postcss">
 ul {
   padding-left: 0;
+}
+
+.todos {
+  flex-grow: 1;
 }
 </style>

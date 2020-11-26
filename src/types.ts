@@ -14,7 +14,7 @@ export type Entry<T> = T extends ArrayLike<infer U>
   : { [K in keyof T]: [K, T[K]] }[keyof T];
 
 /**
- * By using this ObjectConstructor, we get a better experience
+ * By using this ObjectConstructor, we get a better dev experience
  * when iterating over Object.keys or Object.entries
  */
 export interface ObjectConstructor extends Omit<globalThis.ObjectConstructor, "keys" | "entries"> {
@@ -23,6 +23,11 @@ export interface ObjectConstructor extends Omit<globalThis.ObjectConstructor, "k
 }
 
 type mapMethods = "observe" | "observeDeep" | "unobserve" | "unobserveDeep";
+/**
+ * This is an alternative interface for Yjs Maps. It provides Object-Like accessor funcs to the Map.
+ * Use it like this: `let map = new Y.Map(Object.entries(obj)) as unknown as YObject<typeof obj>`
+ * or together with `util.createYObject()` for a less complicated access.
+ */
 export interface YObject<T> extends Iterable<Entry<T>>, Pick<YMap<ValueOf<T>>, mapMethods> {
   [Symbol.iterator](): IterableIterator<Entry<T>>;
   clone(): YObject<T>;
