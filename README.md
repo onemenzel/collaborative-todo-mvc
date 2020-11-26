@@ -11,6 +11,8 @@ Go have a look at [the utils file](https://github.com/onemenzel/collaborative-to
 
 I also made some types for a nicer TypeScript integration of Yjs.
 
+You can find a fully working installation statically hosted on my [github pages](https://onemenzel.github.io/todo-mvc-collab/index.html).
+
 ## Commands
 ```sh
 # setup
