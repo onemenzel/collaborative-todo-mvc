@@ -26,17 +26,26 @@
   </div>
 </template>
 
-<script lang="ts" setup="props">
-import { ref } from "vue";
-export { default as TodoList } from "@/components/TodoList.vue";
-export { default as QrIcon } from "@/components/QrIcon.vue";
-export { default as QrCode } from "@/components/QrCode.vue";
+<script lang="ts">
+import { ref, defineComponent } from "vue";
+import TodoList from "@/components/TodoList.vue";
+import QrIcon from "@/components/QrIcon.vue";
+import QrCode from "@/components/QrCode.vue";
 
-export const loc = ref(window.location.toString());
-window.addEventListener("hashchange", e => {
-  loc.value = window.location.toString();
+export default defineComponent({
+  name: "App",
+  components: { TodoList, QrCode, QrIcon },
+  props: {},
+  setup() {
+    const loc = ref(window.location.toString());
+    window.addEventListener("hashchange", () => {
+      loc.value = window.location.toString();
+    });
+    const showQr = ref(false);
+
+    return { loc, showQr };
+  },
 });
-export const showQr = ref(false);
 </script>
 
 <style>

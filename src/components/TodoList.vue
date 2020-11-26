@@ -10,21 +10,28 @@
   </div>
 </template>
 
-<script lang="ts" setup="props">
+<script lang="ts">
+import { defineComponent } from "vue";
 import { yReactive } from "@/util";
 import { todos as _todos, makeTodo as _makeTodo } from "@/store/todo";
-export { default as Todo } from "./Todo.vue";
+import Todo from "./Todo.vue";
 
-export const todos = yReactive(_todos);
+export default defineComponent({
+  name: "TodoList",
+  components: { Todo },
+  props: {},
+  setup() {
+    const todos = yReactive(_todos);
 
-export function makeTodo(e: KeyboardEvent) {
-  const target = e.target as HTMLInputElement;
-  _makeTodo({ text: target.value });
-  target.value = "";
-}
+    function makeTodo(e: KeyboardEvent) {
+      const target = e.target as HTMLInputElement;
+      _makeTodo({ text: target.value });
+      target.value = "";
+    }
 
-// FIXME: vetur fix. this should not be necessary.
-export default {};
+    return { todos, makeTodo };
+  },
+});
 </script>
 
 <style scoped lang="postcss">

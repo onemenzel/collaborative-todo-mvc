@@ -16,37 +16,40 @@
   </li>
 </template>
 
-<script lang="ts" setup="props">
-export { deleteTodo } from "@/store/todo";
-import { changeTodoText, setDone as _setDone, Todo } from "@/store/todo";
-import { yReactive } from "@/util";
-import { ref } from "vue";
+<script lang="ts">
+import { PropType, ref, defineComponent } from "vue";
 import { YObject } from "@/types";
+import { yReactive } from "@/util";
+import { changeTodoText, setDone as _setDone, Todo, deleteTodo } from "@/store/todo";
 
-declare const props: {
-  todo: YObject<Todo>;
-  index: number;
-};
+export default defineComponent({
+  name: "Todo",
+  components: {},
+  props: {
+    todo: { type: Object as PropType<YObject<Todo>>, required: true },
+    index: { type: Number, required: true },
+  },
+  setup(props) {
+    const todoRef = yReactive(props.todo);
 
-export const todoRef = yReactive(props.todo);
+    const editing = ref(false);
+    const todoTxt = ref(props.todo.get("text"));
 
-export const editing = ref(false);
-export const todoTxt = ref(props.todo.get("text"));
+    function setDone(e: Event, index: number) {
+      const target = e.target as HTMLInputElement;
+      _setDone(index, target.checked);
+    }
 
-export function setDone(e: Event, index: number) {
-  const target = e.target as HTMLInputElement;
-  _setDone(index, target.checked);
-}
+    function toggleEdit() {
+      if (editing.value === true && props.todo.get("text") !== todoTxt.value) {
+        changeTodoText(props.index, todoTxt.value);
+      }
+      editing.value = !editing.value;
+    }
 
-export function toggleEdit() {
-  if (editing.value === true && props.todo.get("text") !== todoTxt.value) {
-    changeTodoText(props.index, todoTxt.value);
-  }
-  editing.value = !editing.value;
-}
-
-// FIXME: vetur fix. this should not be necessary.
-export default {};
+    return { todoRef, editing, todoTxt, setDone, toggleEdit, deleteTodo };
+  },
+});
 </script>
 
 <style scoped lang="postcss">
