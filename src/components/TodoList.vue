@@ -22,6 +22,9 @@ export function makeTodo(e: KeyboardEvent) {
   _makeTodo({ text: target.value });
   target.value = "";
 }
+
+// FIXME: vetur fix. this should not be necessary.
+export default {};
 </script>
 
 <style scoped lang="postcss">

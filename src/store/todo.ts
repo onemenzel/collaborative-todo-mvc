@@ -1,21 +1,17 @@
-import { ValueOf } from "ts-essentials";
-import * as Y from "yjs";
-
-import { objToMap } from "@/util";
+import { createYObject } from "@/util";
 import { doc } from ".";
+import { YObject } from "@/types";
 
 export interface Todo {
   done?: boolean;
   text: string;
 }
 
-export type TodoMap = Y.Map<ValueOf<Todo>>;
-
-export const todos = doc.getArray<TodoMap>("todos");
+export const todos = doc.getArray<YObject<Todo>>("todos");
 
 export function makeTodo(options: Todo) {
-  const todo = Object.assign({ done: false }, options);
-  todos.push([objToMap(todo)]);
+  const todo: Todo = Object.assign({ done: false }, options);
+  todos.push([createYObject(todo)]);
 }
 
 export function setDone(index: number, done: boolean) {

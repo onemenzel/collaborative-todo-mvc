@@ -2,7 +2,8 @@ import { ValueOf } from "ts-essentials";
 import { triggerRef, shallowRef, Ref, onBeforeUnmount } from "vue";
 import * as Y from "yjs";
 
-import { ObjectConstructor } from "@/types";
+import { ObjectConstructor, YObject } from "@/types";
+// import { YMap } from 'yjs/dist/src/internals';
 
 export function entries<T extends {}>(obj: T): Array<[string, any]> {
   return (Object as ObjectConstructor).keys(obj).map(key => [key, obj[key]]);
@@ -16,8 +17,18 @@ export function execAll(...fns: Array<() => any>) {
   return () => fns.forEach(fn => fn());
 }
 
-// type YjsType<T = any> = Y.Map<T> | Y.Array<T> | Y.Text | Y.XmlElement | Y.XmlFragment;
-type YjsType<T = any> = Y.AbstractType<any>;
+type YjsType<T = any> =
+  | YObject<T>
+  | Y.Map<ValueOf<T>>
+  | Y.Array<ValueOf<T>>
+  | Y.Text
+  | Y.XmlElement
+  | Y.XmlFragment;
+// type YjsType<T = any> = Y.AbstractType<any>;
+
+export function createYObject<T extends object>(o: T) {
+  return (new Y.Map(Object.entries(o)) as unknown) as YObject<T>;
+}
 
 /**
  * Turns a Yjs CRDT into a reactive Vue property.

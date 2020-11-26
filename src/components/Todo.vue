@@ -18,19 +18,20 @@
 
 <script lang="ts" setup="props">
 export { deleteTodo } from "@/store/todo";
-import { changeTodoText, setDone as _setDone, TodoMap } from "@/store/todo";
+import { changeTodoText, setDone as _setDone, Todo } from "@/store/todo";
 import { yReactive } from "@/util";
 import { ref } from "vue";
+import { YObject } from "@/types";
 
 declare const props: {
-  todo: TodoMap;
+  todo: YObject<Todo>;
   index: number;
 };
 
 export const todoRef = yReactive(props.todo);
 
 export const editing = ref(false);
-export const todoTxt = ref(props.todo.get("text") as string);
+export const todoTxt = ref(props.todo.get("text"));
 
 export function setDone(e: Event, index: number) {
   const target = e.target as HTMLInputElement;
@@ -43,6 +44,9 @@ export function toggleEdit() {
   }
   editing.value = !editing.value;
 }
+
+// FIXME: vetur fix. this should not be necessary.
+export default {};
 </script>
 
 <style scoped lang="postcss">
